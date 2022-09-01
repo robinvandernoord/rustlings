@@ -14,18 +14,39 @@
 
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 
-pub struct ReportCard {
-    pub grade: f32,
+pub struct ReportCard<T: PrintScore> {
+    pub grade: T,
     pub student_name: String,
     pub student_age: u8,
 }
 
-impl ReportCard {
+pub trait PrintScore {
+    fn print_score(&self) -> String;
+}
+
+impl PrintScore for &str {
+    // Add your code here
+    fn print_score(&self) -> String {
+        return self.to_string()
+    }
+}
+
+impl PrintScore for f64 {
+    // Add your code here
+    fn print_score(&self) -> String {
+        return format!("{}", self);
+    }
+}
+
+impl<T: PrintScore> ReportCard<T> {
+    fn print_score(&self, score: &T) -> String {
+        return score.print_score();
+    }
+
     pub fn print(&self) -> String {
         format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+            &self.student_name, &self.student_age, self.print_score(&self.grade))
     }
 }
 
@@ -35,6 +56,7 @@ mod tests {
 
     #[test]
     fn generate_numeric_report_card() {
+
         let report_card = ReportCard {
             grade: 2.1,
             student_name: "Tom Wriggle".to_string(),
@@ -48,9 +70,8 @@ mod tests {
 
     #[test]
     fn generate_alphabetic_report_card() {
-        // TODO: Make sure to change the grade here after you finish the exercise.
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: "A+",
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };
